@@ -163,6 +163,18 @@ bool Load(const std::string& steamclientPath)
         kIPCChannel,
         "steamclient",
         steamclientPath,
+    }, [](const std::string& body) {
+        try {
+            const toml::table root = toml::parse(body);
+            for (const auto& [key, val] : root) {
+                if (!val.is_table()) continue;
+                Interface iface;
+                if (ParseInterfaceTable(key.str(), *val.as_table(), iface) &&
+                    !iface.methods.empty()) return true;
+            }
+        } catch (const toml::parse_error&) {
+        }
+        return false;
     });
 
     if (!r.ok) {
@@ -189,7 +201,7 @@ bool Load(const std::string& steamclientPath)
 
     LOG_INFO("IPCLoader: loaded {} methods across {} interfaces ({})",
              MethodCount(), InterfaceCount(),
-             r.fromCache ? "cache fallback" : "remote");
+             r.fromCache ? "local cache" : "remote");
     return true;
 }
 
