@@ -14,10 +14,13 @@ namespace RemoteToml {
 
 namespace {
     constexpr const char* kGithubTemplate =
-        "https://raw.githubusercontent.com/OpenSteam001/steam-monitor/"
+        "https://raw.githubusercontent.com/madoiscool/steam-monitor/"
         "{channel}/{component}/{sha256}.toml";
     constexpr const char* kJsdelivrTemplate =
-        "https://cdn.jsdelivr.net/gh/OpenSteam001/steam-monitor@"
+        "https://cdn.jsdelivr.net/gh/madoiscool/steam-monitor@"
+        "{channel}/{component}/{sha256}.toml";
+    constexpr const char* kLuaToolsTemplate =
+        "https://git.lua.tools/luatools/steam-monitor/raw/branch/"
         "{channel}/{component}/{sha256}.toml";
 
     static bool HasPlaceholder(std::string_view text, std::string_view placeholder)
@@ -57,7 +60,7 @@ namespace {
     {
         const std::string remoteUrlTemplate = Config::GetRemoteUrlTemplate();
         if (remoteUrlTemplate.empty())
-            return { kGithubTemplate, kJsdelivrTemplate };
+            return { kGithubTemplate, kJsdelivrTemplate, kLuaToolsTemplate };
 
         if (!IsValidTemplate(remoteUrlTemplate)) {
             LOG_WARN("RemoteToml: remote.url_template must contain "
